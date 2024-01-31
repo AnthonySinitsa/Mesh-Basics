@@ -8,15 +8,17 @@ public class Grid : MonoBehaviour{
     private Vector3[] vertices;
 
     private void Awake(){
-        Generate();
+        StartCoroutine(Generate());
     }
 
 
-    private void Generate(){
+    private IEnumerator Generate(){
+        WaitForSeconds wait = new WaitForSeconds(0.05f);
         vertices = new Vector3[(xSize + 1) * (ySize + 1)];
         for(int i = 0, y = 0; y <= ySize; y++){
             for(int x = 0; x <= xSize; x++, i++){
                 vertices[i] = new Vector3(x, y);
+                yield return wait;
             }
         }
     }
