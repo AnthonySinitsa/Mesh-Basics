@@ -10,12 +10,10 @@ public class Grid : MonoBehaviour{
     private Mesh mesh;
 
     private void Awake(){
-        StartCoroutine(Generate());
+        Generate();
     }
 
-    private IEnumerator Generate(){
-        WaitForSeconds wait = new WaitForSeconds(0.05f);
-
+    private void Generate(){
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         mesh.name = "Procedural Grid";
@@ -24,7 +22,6 @@ public class Grid : MonoBehaviour{
         for(int i = 0, y = 0; y <= ySize; y++){
             for(int x = 0; x <= xSize; x++, i++){
                 vertices[i] = new Vector3(x, y);
-                yield return wait;
             }
         }
 
@@ -37,10 +34,9 @@ public class Grid : MonoBehaviour{
 		        triangles[ti + 3] = triangles[ti + 2] = vi + 1;
 		        triangles[ti + 4] = triangles[ti + 1] = vi + xSize + 1;
 		        triangles[ti + 5] = vi + xSize + 2;
-                mesh.triangles = triangles;
-                yield return wait;
             }
         }
+        mesh.triangles = triangles;
     }
 
     // visualize vertices
