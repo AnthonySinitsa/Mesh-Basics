@@ -30,10 +30,11 @@ public class Grid : MonoBehaviour{
 
         mesh.vertices = vertices;
 
-        int[] triangles = new int[3];
+        int[] triangles = new int[6];
         triangles[0] = 0;
-        triangles[1] = xSize + 1;
-        triangles[2] = 1;
+		triangles[3] = triangles[2] = 1;
+		triangles[4] = triangles[1] = xSize + 1;
+		triangles[5] = xSize + 2;
         mesh.triangles = triangles;
     }
 
