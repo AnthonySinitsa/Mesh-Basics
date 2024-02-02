@@ -19,13 +19,15 @@ public class Grid : MonoBehaviour{
         mesh.name = "Procedural Grid";
 
         vertices = new Vector3[(xSize + 1) * (ySize + 1)];
+        Vector2[] uv = new Vector2[vertices.Length];
         for(int i = 0, y = 0; y <= ySize; y++){
             for(int x = 0; x <= xSize; x++, i++){
                 vertices[i] = new Vector3(x, y);
+                uv[i] = new Vector2((float)x / xSize, (float)y / ySize);
             }
         }
-
         mesh.vertices = vertices;
+        mesh.uv = uv;
 
         int[] triangles = new int[xSize * ySize * 6];
         for(int ti = 0, vi = 0, y = 0; y < ySize; y++, vi++){
@@ -37,6 +39,7 @@ public class Grid : MonoBehaviour{
             }
         }
         mesh.triangles = triangles;
+        mesh.RecalculateNormals();
     }
 
     // visualize vertices
