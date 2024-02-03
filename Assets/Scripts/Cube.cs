@@ -10,14 +10,15 @@ public class Cube : MonoBehaviour{
     private Vector3[] vertices;
 
     private void Awake(){
-        StartCoroutine(Generate());
+        Generate();
     }
 
-    private IEnumerator Generate(){
+    private void Generate(){
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         mesh.name = "Procedural Cube";
-        WaitForSeconds wait = new WaitForSeconds(0.05f);
+        CreateVertices();
+        CreateTriangles();
 
         int cornerVertices = 8;
         int edgeVertices = (xSize + ySize + zSize - 3) * 4;
@@ -31,35 +32,56 @@ public class Cube : MonoBehaviour{
         for(int y = 0; y <= ySize; y++){
             for(int x = 0; x <= xSize; x++){
                 vertices[v++] = new Vector3(x, y, 0);
-                yield return wait;
             }
             for (int z = 1; z <= zSize; z++) {
                 vertices[v++] = new Vector3(xSize, y, z);
-                yield return wait;
             }
             for (int x = xSize - 1; x >= 0; x--) {
                 vertices[v++] = new Vector3(x, y, zSize);
-                yield return wait;
             }
             for (int z = zSize - 1; z > 0; z--) {
                 vertices[v++] = new Vector3(0, y, z);
-                yield return wait;
             }
         }
         for (int z = 1; z < zSize; z++) {
 			for (int x = 1; x < xSize; x++) {
 				vertices[v++] = new Vector3(x, ySize, z);
-				yield return wait;
 			}
 		}
 		for (int z = 1; z < zSize; z++) {
 			for (int x = 1; x < xSize; x++) {
 				vertices[v++] = new Vector3(x, 0, z);
-				yield return wait;
 			}
 		}
 
     }
+
+    private void CreateVertices(){
+        mesh.vertices = vertices;
+    }
+
+    private void CreateTriangles () {
+		int quads = (xSize * ySize + xSize * zSize + ySize * zSize) * 2;
+		int[] triangles = new int[quads * 6];
+		int ring = (xSize + zSize) * 2;
+		int t = 0, v = 0;
+
+		for (int q = 0; q < ring - 1; q++, v++) {
+			t = SetQuad(triangles, t, v, v + 1, v + ring, v + ring + 1);
+		}
+		t = SetQuad(triangles, t, v, v - ring + 1, v + ring, v + 1);
+		
+		mesh.triangles = triangles;
+	}
+
+    private static int
+	SetQuad (int[] triangles, int i, int v00, int v10, int v01, int v11) {
+		triangles[i] = v00;
+		triangles[i + 1] = triangles[i + 4] = v01;
+		triangles[i + 2] = triangles[i + 3] = v10;
+		triangles[i + 5] = v11;
+		return i + 6;
+	}
 
     // visualize vertices
     private void OnDrawGizmos(){
