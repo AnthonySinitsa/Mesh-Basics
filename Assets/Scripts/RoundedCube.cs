@@ -95,7 +95,7 @@ public class RoundedCube : MonoBehaviour {
 		int tZ = 0, tX = 0, tY = 0, v = 0;
 
 		for (int y = 0; y < ySize; y++, v++) {
-			for (int q = 0; q < xSize - 1; q++, v++) {
+			for (int q = 0; q < xSize; q++, v++) {
 				tZ = SetQuad(trianglesZ, tZ, v, v + 1, v + ring, v + ring + 1);
 			}
             for (int q = 0; q < zSize; q++, v++) {
@@ -112,6 +112,7 @@ public class RoundedCube : MonoBehaviour {
 
 		tY = CreateTopFace(trianglesY, tY, ring);
 		tY = CreateBottomFace(trianglesY, tY, ring);
+
         mesh.subMeshCount = 3;
 		mesh.SetTriangles(trianglesZ, 0);
 		mesh.SetTriangles(trianglesX, 1);
