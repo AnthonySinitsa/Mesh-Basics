@@ -20,7 +20,20 @@ public class RoundedCube : MonoBehaviour {
 		mesh.name = "Procedural Cube";
 		CreateVertices();
 		CreateTriangles();
+        CreateColliders();
 	}
+
+
+    private void CreateColliders(){
+        AddBoxCollider(xSize, ySize - roundness * 2, zSize - roundness * 2);
+        AddBoxCollider(xSize - roundness * 2, ySize, zSize - roundness * 2);
+        AddBoxCollider(xSize - roundness * 2, ySize - roundness * 2, zSize);
+    }
+
+    private void AddBoxCollider(float x, float y, float z){
+        BoxCollider c = gameObject.AddComponent<BoxCollider>();
+        c.size = new Vector3(x, y, z);
+    }
 
 	private void CreateVertices () {
 		int cornerVertices = 8;
