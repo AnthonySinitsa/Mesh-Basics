@@ -24,76 +24,42 @@ public class CubeSphere : MonoBehaviour {
 
 
     private void CreateColliders(){
-        AddBoxCollider(xSize, ySize - roundness * 2, zSize - roundness * 2);
-        AddBoxCollider(xSize - roundness * 2, ySize, zSize - roundness * 2);
-        AddBoxCollider(xSize - roundness * 2, ySize - roundness * 2, zSize);
-
-        Vector3 min = Vector3.one * roundness;
-		Vector3 half = new Vector3(xSize, ySize, zSize) * 0.5f; 
-		Vector3 max = new Vector3(xSize, ySize, zSize) - min;
-
-		AddCapsuleCollider(0, half.x, min.y, min.z);
-		AddCapsuleCollider(0, half.x, min.y, max.z);
-		AddCapsuleCollider(0, half.x, max.y, min.z);
-		AddCapsuleCollider(0, half.x, max.y, max.z);
-		
-		AddCapsuleCollider(1, min.x, half.y, min.z);
-		AddCapsuleCollider(1, min.x, half.y, max.z);
-		AddCapsuleCollider(1, max.x, half.y, min.z);
-		AddCapsuleCollider(1, max.x, half.y, max.z);
-		
-		AddCapsuleCollider(2, min.x, min.y, half.z);
-		AddCapsuleCollider(2, min.x, max.y, half.z);
-		AddCapsuleCollider(2, max.x, min.y, half.z);
-		AddCapsuleCollider(2, max.x, max.y, half.z);
-    }
-
-    private void AddBoxCollider(float x, float y, float z){
-        BoxCollider c = gameObject.AddComponent<BoxCollider>();
-        c.size = new Vector3(x, y, z);
-    }
-
-    private void AddCapsuleCollider(int direction, float x, float y, float z){
-        CapsuleCollider c = gameObject.AddComponent<CapsuleCollider>();
-        c.center = new Vector3(x, y, z);
-        c.direction = direction;
-        c.radius = roundness;
-        c.height = c.center[direction] * 2f;
+      gameObject.AddComponent<SphereCollider>();
     }
 
 	private void CreateVertices () {
 		int cornerVertices = 8;
-		int edgeVertices = (xSize + ySize + zSize - 3) * 4;
+		int edgeVertices = (gridSize + gridSize + gridSize - 3) * 4;
 		int faceVertices = (
-			(xSize - 1) * (ySize - 1) +
-			(xSize - 1) * (zSize - 1) +
-			(ySize - 1) * (zSize - 1)) * 2;
+			(gridSize - 1) * (gridSize - 1) +
+			(gridSize - 1) * (gridSize - 1) +
+			(gridSize - 1) * (gridSize - 1)) * 2;
 		vertices = new Vector3[cornerVertices + edgeVertices + faceVertices];
 		normals = new Vector3[vertices.Length];
         cubeUV = new Color32[vertices.Length];
 
 		int v = 0;
-		for (int y = 0; y <= ySize; y++) {
-			for (int x = 0; x <= xSize; x++) {
+		for (int y = 0; y <= gridSize; y++) {
+			for (int x = 0; x <= gridSize; x++) {
 				SetVertex(v++, x, y, 0);
 			}
-			for (int z = 1; z <= zSize; z++) {
-				SetVertex(v++, xSize, y, z);
+			for (int z = 1; z <= gridSize; z++) {
+				SetVertex(v++, gridSize, y, z);
 			}
-			for (int x = xSize - 1; x >= 0; x--) {
-				SetVertex(v++, x, y, zSize);
+			for (int x = gridSize - 1; x >= 0; x--) {
+				SetVertex(v++, x, y, gridSize);
 			}
-			for (int z = zSize - 1; z > 0; z--) {
+			for (int z = gridSize - 1; z > 0; z--) {
 				SetVertex(v++, 0, y, z);
 			}
 		}
-		for (int z = 1; z < zSize; z++) {
-			for (int x = 1; x < xSize; x++) {
-				SetVertex(v++, x, ySize, z);
+		for (int z = 1; z < gridSize; z++) {
+			for (int x = 1; x < gridSize; x++) {
+				SetVertex(v++, x, gridSize, z);
 			}
 		}
-		for (int z = 1; z < zSize; z++) {
-			for (int x = 1; x < xSize; x++) {
+		for (int z = 1; z < gridSize; z++) {
+			for (int x = 1; x < gridSize; x++) {
 				SetVertex(v++, x, 0, z);
 			}
 		}
@@ -109,20 +75,20 @@ public class CubeSphere : MonoBehaviour {
 		if (x < roundness) {
 			inner.x = roundness;
 		}
-		else if (x > xSize - roundness) {
-			inner.x = xSize - roundness;
+		else if (x > gridSize - roundness) {
+			inner.x = gridSize - roundness;
 		}
 		if (y < roundness) {
 			inner.y = roundness;
 		}
-		else if (y > ySize - roundness) {
-			inner.y = ySize - roundness;
+		else if (y > gridSize - roundness) {
+			inner.y = gridSize - roundness;
 		}
 		if (z < roundness) {
 			inner.z = roundness;
 		}
-		else if (z > zSize - roundness) {
-			inner.z = zSize - roundness;
+		else if (z > gridSize - roundness) {
+			inner.z = gridSize - roundness;
 		}
 
 		normals[i] = (vertices[i] - inner).normalized;
@@ -131,23 +97,23 @@ public class CubeSphere : MonoBehaviour {
 	}
 
 	private void CreateTriangles () {
-		int[] trianglesZ = new int[(xSize * ySize) * 12];
-		int[] trianglesX = new int[(ySize * zSize) * 12];
-		int[] trianglesY = new int[(xSize * zSize) * 12];
-		int ring = (xSize + zSize) * 2;
+		int[] trianglesZ = new int[(gridSize * gridSize) * 12];
+		int[] trianglesX = new int[(gridSize * gridSize) * 12];
+		int[] trianglesY = new int[(gridSize * gridSize) * 12];
+		int ring = (gridSize + gridSize) * 2;
 		int tZ = 0, tX = 0, tY = 0, v = 0;
 
-		for (int y = 0; y < ySize; y++, v++) {
-			for (int q = 0; q < xSize; q++, v++) {
+		for (int y = 0; y < gridSize; y++, v++) {
+			for (int q = 0; q < gridSize; q++, v++) {
 				tZ = SetQuad(trianglesZ, tZ, v, v + 1, v + ring, v + ring + 1);
 			}
-			for (int q = 0; q < zSize; q++, v++) {
+			for (int q = 0; q < gridSize; q++, v++) {
 				tX = SetQuad(trianglesX, tX, v, v + 1, v + ring, v + ring + 1);
 			}
-			for (int q = 0; q < xSize; q++, v++) {
+			for (int q = 0; q < gridSize; q++, v++) {
 				tZ = SetQuad(trianglesZ, tZ, v, v + 1, v + ring, v + ring + 1);
 			}
-			for (int q = 0; q < zSize - 1; q++, v++) {
+			for (int q = 0; q < gridSize - 1; q++, v++) {
 				tX = SetQuad(trianglesX, tX, v, v + 1, v + ring, v + ring + 1);
 			}
 			tX = SetQuad(trianglesX, tX, v, v - ring + 1, v + ring, v + 1);
@@ -163,29 +129,29 @@ public class CubeSphere : MonoBehaviour {
 	}
 
 	private int CreateTopFace (int[] triangles, int t, int ring) {
-		int v = ring * ySize;
-		for (int x = 0; x < xSize - 1; x++, v++) {
+		int v = ring * gridSize;
+		for (int x = 0; x < gridSize - 1; x++, v++) {
 			t = SetQuad(triangles, t, v, v + 1, v + ring - 1, v + ring);
 		}
 		t = SetQuad(triangles, t, v, v + 1, v + ring - 1, v + 2);
 
-		int vMin = ring * (ySize + 1) - 1;
+		int vMin = ring * (gridSize + 1) - 1;
 		int vMid = vMin + 1;
 		int vMax = v + 2;
 
-		for (int z = 1; z < zSize - 1; z++, vMin--, vMid++, vMax++) {
-			t = SetQuad(triangles, t, vMin, vMid, vMin - 1, vMid + xSize - 1);
-			for (int x = 1; x < xSize - 1; x++, vMid++) {
+		for (int z = 1; z < gridSize - 1; z++, vMin--, vMid++, vMax++) {
+			t = SetQuad(triangles, t, vMin, vMid, vMin - 1, vMid + gridSize - 1);
+			for (int x = 1; x < gridSize - 1; x++, vMid++) {
 				t = SetQuad(
 					triangles, t,
-					vMid, vMid + 1, vMid + xSize - 1, vMid + xSize);
+					vMid, vMid + 1, vMid + gridSize - 1, vMid + gridSize);
 			}
-			t = SetQuad(triangles, t, vMid, vMax, vMid + xSize - 1, vMax + 1);
+			t = SetQuad(triangles, t, vMid, vMax, vMid + gridSize - 1, vMax + 1);
 		}
 
 		int vTop = vMin - 2;
 		t = SetQuad(triangles, t, vMin, vMid, vTop + 1, vTop);
-		for (int x = 1; x < xSize - 1; x++, vTop--, vMid++) {
+		for (int x = 1; x < gridSize - 1; x++, vTop--, vMid++) {
 			t = SetQuad(triangles, t, vMid, vMid + 1, vTop, vTop - 1);
 		}
 		t = SetQuad(triangles, t, vMid, vTop - 2, vTop, vTop - 1);
@@ -195,30 +161,30 @@ public class CubeSphere : MonoBehaviour {
 
 	private int CreateBottomFace (int[] triangles, int t, int ring) {
 		int v = 1;
-		int vMid = vertices.Length - (xSize - 1) * (zSize - 1);
+		int vMid = vertices.Length - (gridSize - 1) * (gridSize - 1);
 		t = SetQuad(triangles, t, ring - 1, vMid, 0, 1);
-		for (int x = 1; x < xSize - 1; x++, v++, vMid++) {
+		for (int x = 1; x < gridSize - 1; x++, v++, vMid++) {
 			t = SetQuad(triangles, t, vMid, vMid + 1, v, v + 1);
 		}
 		t = SetQuad(triangles, t, vMid, v + 2, v, v + 1);
 
 		int vMin = ring - 2;
-		vMid -= xSize - 2;
+		vMid -= gridSize - 2;
 		int vMax = v + 2;
 
-		for (int z = 1; z < zSize - 1; z++, vMin--, vMid++, vMax++) {
-			t = SetQuad(triangles, t, vMin, vMid + xSize - 1, vMin + 1, vMid);
-			for (int x = 1; x < xSize - 1; x++, vMid++) {
+		for (int z = 1; z < gridSize - 1; z++, vMin--, vMid++, vMax++) {
+			t = SetQuad(triangles, t, vMin, vMid + gridSize - 1, vMin + 1, vMid);
+			for (int x = 1; x < gridSize - 1; x++, vMid++) {
 				t = SetQuad(
 					triangles, t,
-					vMid + xSize - 1, vMid + xSize, vMid, vMid + 1);
+					vMid + gridSize - 1, vMid + gridSize, vMid, vMid + 1);
 			}
-			t = SetQuad(triangles, t, vMid + xSize - 1, vMax + 1, vMid, vMax);
+			t = SetQuad(triangles, t, vMid + gridSize - 1, vMax + 1, vMid, vMax);
 		}
 
 		int vTop = vMin - 1;
 		t = SetQuad(triangles, t, vTop + 1, vTop, vTop + 2, vMid);
-		for (int x = 1; x < xSize - 1; x++, vTop--, vMid++) {
+		for (int x = 1; x < gridSize - 1; x++, vTop--, vMid++) {
 			t = SetQuad(triangles, t, vTop, vTop - 1, vMid, vMid + 1);
 		}
 		t = SetQuad(triangles, t, vTop, vTop - 1, vMid, vTop - 2);
