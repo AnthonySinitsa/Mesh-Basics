@@ -274,6 +274,7 @@ GameObject:
   - component: {fileID: 804615697}
   - component: {fileID: 804615696}
   - component: {fileID: 804615695}
+  - component: {fileID: 804615698}
   m_Layer: 0
   m_Name: Cube Sphere
   m_TagString: Untagged
@@ -308,7 +309,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a196adf1ac7a47b4cb1bfca230f1f92e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: 10
+  gridSize: 20
   radius: 1
 --- !u!23 &804615696
 MeshRenderer:
@@ -362,6 +363,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 804615693}
   m_Mesh: {fileID: 0}
+--- !u!114 &804615698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 804615693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83e5e34f005d54947bdd11729ac62c9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &937668106
 GameObject:
   m_ObjectHideFlags: 0
