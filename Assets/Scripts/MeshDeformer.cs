@@ -7,6 +7,7 @@ public class MeshDeformer : MonoBehaviour {
     Vector3[] originalVertices, displacedVertices;
 
     Vector3[] vertexVelocities;
+    public float springForce = 20f;
 
     void Start () {
 		deformingMesh = GetComponent<MeshFilter>().mesh;
@@ -28,6 +29,9 @@ public class MeshDeformer : MonoBehaviour {
 
     void UpdateVertex(int i){
         Vector3 velocity = vertexVelocities[i];
+        Vector3 displacement = displacedVertices[i] - originalVertices[i];
+        velocity -= displacement * springForce * Time.deltaTime;
+        vertexVelocities[i] = velocity;
         displacedVertices[i] += velocity * Time.deltaTime;
     }
 
