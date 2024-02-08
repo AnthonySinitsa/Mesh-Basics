@@ -29,4 +29,17 @@ public class MeshDeformer : MonoBehaviour {
         float attenuateForce = foarce / (1f + pointToVertex.sqrMagnitude);
         vertexVelocities[i] += pointToVertex.normalized * velocity;
     }
+
+    void Update(){
+        for(int i = 0; i < displacedVertices.Length; i++){
+            UpdateVertex(i);
+        }
+        deformingMesh.vertices = displacedVertices;
+        deformingMesh.RecalculateNormals();
+    }
+    
+    void UpdateVertex(int i){
+        Vector3 velocity = vertexVelocities[i];
+        displacedVertices[i] += velocity * Time.deltaTime;
+    }
 }
