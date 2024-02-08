@@ -25,6 +25,8 @@ public class MeshDeformer : MonoBehaviour {
     }
 
     void AddForceToVertex(int i, Vector3 point, float force){
-        
+        Vector3 pointToVertex = displacedVertices[i] - point;
+        float attenuateForce = foarce / (1f + pointToVertex.sqrMagnitude);
+        vertexVelocities[i] += pointToVertex.normalized * velocity;
     }
 }
