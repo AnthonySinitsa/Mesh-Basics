@@ -38,6 +38,7 @@ public class MeshDeformer : MonoBehaviour {
     }
 
     public void AddDeformingForce(Vector3 point, float force){
+        point = transform.InverseTransformPoint(point);
         for(int i = 0; i < displacedVertices.Length; i++){
             AddForceToVertex(i, point, force);
         }
